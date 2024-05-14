@@ -282,8 +282,8 @@ referanse til argument og attributt
   == Hvorfor bruke Terraform?
 
   - koden _er_ infrastrukturen $==>$ "dokumentasjonen" vedlikeholdes automatisk
-  - tjenestene blir totalt reproduserbare
   - historikk ved hjelp av git
+  - tjenestene blir mer reproduserbare
 
   #uncover(2)[
     En tjeneste består av både kode _og_ infrastruktur
