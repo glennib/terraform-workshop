@@ -1,7 +1,7 @@
 // Get Polylux from the official package repository
 #import "@preview/polylux:0.3.1": *
 #import "@preview/cetz:0.2.2"
-#import themes.simple: title-slide, centered-slide, focus-slide, slide
+#import themes.simple: title-slide, centered-slide, focus-slide, slide, simple-theme
 
 // Make the paper dimensions fit for a presentation and the text larger
 #set page(paper: "presentation-16-9")
@@ -204,12 +204,18 @@ resource "google_pubsub_subscription" "the-subscription" {
   == Hvorfor bruke Terraform?
 
   - koden _er_ infrastrukturen $==>$ "dokumentasjonen" vedlikeholdes automatisk
-  - tjenestene blir totalt reproduserbare
   - historikk ved hjelp av git
+  - tjenestene blir mer reproduserbare
+
+  #v(1fr)
 
   #uncover(2)[
     En tjeneste består av både kode _og_ infrastruktur
   ]
+]
+
+#centered-slide[
+  = Hvordan fungerer Terraform?
 ]
 
 #slide[
@@ -233,13 +239,16 @@ resource "google_pubsub_subscription" "the-subscription" {
   description = "Subscribes to id ${google_pubsub_topic.the-topic.id}"
 }
 ```
+
 ]
 
+// empty lines to make the code blocks the same height
 #only(2)[
 ```hcl
 resource "google_pubsub_topic" "the-topic" {
   name = "my-fancy-topic"
 }
+
 
 
 
@@ -275,17 +284,40 @@ referanse til argument og attributt
 ]
 
 #v(1fr)
+]
 
+
+#slide[
+  #image("assets/terraform-concepts-1.svg", width: 100%)
 ]
 
 #slide[
-  == Hvorfor bruke Terraform?
+  == I grove trekk
 
-  - koden _er_ infrastrukturen $==>$ "dokumentasjonen" vedlikeholdes automatisk
-  - historikk ved hjelp av git
-  - tjenestene blir mer reproduserbare
-
-  #uncover(2)[
-    En tjeneste består av både kode _og_ infrastruktur
-  ]
+  #grid(columns: (1fr, 1fr), gutter: 1em, [
+    - utvikleren endrer på en *konfigurasjon* (f.eks. legger til ressurser i `main.tf`)
+    #uncover("2-")[
+    - terraform sammenlikner konfigurasjonen med en *tilstand* og lager en *plan*
+    ]
+    #uncover("3-")[
+    - terraform får tilgang til skyen ved hjelp av en *provider*
+    ]
+    #uncover("4-")[
+    - ved hjelp av providerens API-er gjør terraform endringer i ressurser
+    ]
+    #uncover("5-")[
+    - tilstanden er nå oppdatert slik at den stemmer med konfigurasjonen
+    ]
+  ], [
+    / konfigurasjon: filer som slutter med `.tf`
+    #uncover("2-")[
+    / tilstand: vanligvis `default.tfstate` -- lagret lokalt eller i en bøtte (en *backend*) -- beskriver hvilke ressurser terraform tracker og tilstanden til disse ressursene -- holdes i synk ved hver `terraform plan/refresh`
+    / plan: en sekvens av handlinger som utgjør en diff, og fører til at tilstanden er slik konfigurasjonen tilsier
+    ]
+    #uncover("3-")[
+    / provider: en plugin som beskriver hvilke ressurser som er tilgjengelige, og hvordan de konfigureres
+    ]
+  ])
 ]
+
+
