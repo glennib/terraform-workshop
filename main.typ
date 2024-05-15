@@ -9,7 +9,7 @@
 #set text(size: 20pt, lang: "nb")
 #show link: t => [#set text(blue); #underline[#t]]
 
-#show heading.where(level: 1): set block(below: 1em)
+#show heading: set block(below: 1em)
 
 // Use #polylux-slide to create a slide and style it using your favourite Typst functions
 #title-slide[
@@ -28,20 +28,16 @@
 #slide[
   #v(1fr)
   #grid(columns: (1fr, 1fr), [
-    == Agenda
-
-    - Hvordan lager vi ressurser i skyen?
-    - Hva er Terraform?
-    - Hvorfor er det lurt å bruke det?
-    - Hvordan fungerer det egentlig?
-    - Vanlige operasjoner
-    - Spesialoperasjoner
+    #show outline.entry: it => [
+      #sym.bullet #h(0.2em) #it.element.body
+    ]
+    #outline(depth: 1, fill: none)
   ], align(horizon, image("assets/Terraform_Logo.svg", width: 100%)))
   #v(1fr)
 ]
 
 #centered-slide[
-  = Hvordan lager vi ressurser i skyen?
+  = Slik håndterer vi ressurser i skyen
 ]
 
 #centered-slide[
@@ -58,14 +54,14 @@
 _Presist_
 
 ```bash
-  gcloud --project='amedia-adp-test' pubsub \
-    topics create 'my-topic' \
-    --message-retention-duration=1d
+gcloud --project='amedia-adp-test' pubsub \
+  topics create 'my-topic' \
+  --message-retention-duration=1d
 
-  gcloud --project='amedia-adp-test' pubsub \
-    subscriptions create 'my-subscription' \
-    --topic='my-topic'
-  ```
+gcloud --project='amedia-adp-test' pubsub \
+  subscriptions create 'my-subscription' \
+  --topic='my-topic'
+```
 
 #uncover(
   2,
@@ -150,16 +146,14 @@ _Presist_
 ]
 
 #centered-slide[
-  = Hva er Terraform?
+  = Dette er Terraform
 
   infrastruktur som kode \
   _(infrastrucure as code, IaC)_
 ]
 
 #slide[
-== Ønsket tilstand
-
-#v(1em)
+== Man beskriver ønsket tilstand
 
 #grid(columns: (1fr, 1fr), [
 Jeg vil ha:
@@ -170,7 +164,7 @@ Jeg vil ha:
   - pusher til et endepunkt
 ], [
 #uncover(2)[
-#set text(size: 12pt)
+#set text(size: 13pt)
 ```hcl
 resource "google_pubsub_topic" "the-topic" {
   name = "my-fancy-topic"
@@ -181,13 +175,11 @@ resource "google_pubsub_subscription" "the-subscription" {
   topic = google_pubsub_topic.the-topic.name
   ack_deadline_seconds = 20
   push_config {
-    push_endpoint = "https://my-endpoint.example.com/notify"
+    push_endpoint = "https://example.com/notify"
   }
 }
 ```
 ]
-
-#v(3em)
 
 ])
 
@@ -198,11 +190,11 @@ resource "google_pubsub_subscription" "the-subscription" {
 ]
 
 #centered-slide[
-  = Hvorfor bruke Terraform?
+  = Derfor er det lurt å bruke Terraform
 ]
 
 #slide[
-  == Hvorfor bruke Terraform?
+  == Å bruke Terraform er lurt fordi
 
   - koden _er_ infrastrukturen $==>$ "dokumentasjonen" vedlikeholdes automatisk
   - historikk ved hjelp av git
@@ -216,13 +208,11 @@ resource "google_pubsub_subscription" "the-subscription" {
 ]
 
 #centered-slide[
-  = Hvordan fungerer Terraform?
+  = Slik fungerer det (_ish_)
 ]
 
 #slide[
-== Eksempel
-
-#v(1fr)
+== Eksempel: Et pubsub topic og en subscription
 
 #only((1, 4))[
 ```hcl
@@ -292,7 +282,8 @@ referanse til argument og attributt
 ]
 
 #slide[
-== I grove trekk
+#show heading: set block(below: 0.7em) // in this slide the default block is too large
+== Prosessen i grove trekk
 
 #grid(
   columns: (1fr, 1fr), gutter: 1em, [
@@ -333,7 +324,7 @@ referanse til argument og attributt
 ]
 
 #centered-slide[
-= Vanlige operasjoner
+= Noen vanlige operasjoner
 
 #sym.bullet legge til en ressurs #sym.bullet `count` og `for_each` #sym.bullet lage
 en modul
@@ -345,12 +336,12 @@ Med demonstrasjon fra lokal kjøring av Terraform
 == Legge til en ressurs
 #speaker-note(
   ```md
-        Lag en ny mappe med terraform-filer basert på privat tf test repo
+  Lag en ny mappe med terraform-filer basert på privat tf test repo
 
-        Lag en ny topic ressurs i `main.tf` og kjør `terraform init` og `terraform apply`
+  Lag en ny topic ressurs i `main.tf` og kjør `terraform init` og `terraform apply`
 
-        Sjekk at ressursen er opprettet i skyen
-        ```,
+  Sjekk at ressursen er opprettet i skyen
+  ```,
 )
 ]
 
@@ -365,13 +356,13 @@ Med demonstrasjon fra lokal kjøring av Terraform
 == Lage en modul
 #speaker-note(
   ```md
-        Flytt disse ressursene til en modul og bruk modulen i `main.tf`, med variabler og outputs
-        ```,
+  Flytt disse ressursene til en modul og bruk modulen i `main.tf`, med variabler og outputs
+  ```
 )
 ]
 
 #centered-slide[
-  = Drift
+  = Håndtering av «drift»
 
   Hva om noen tuller det til med ClickOps™?
 ]
@@ -381,12 +372,12 @@ Med demonstrasjon fra lokal kjøring av Terraform
 ]
 
 #slide[
-  == Drift
-  - Har noen lagt til en ressurs?
-    - Dette er helt OK, Terraform tracker ikke ressurser som ikke er i tilstanden, og
-      vil derfor ikke gjøre noe med dem.
-    - Om man ønsker å tracke dem med Terraform etter at de er opprettet, kan man
-      importere dem.
+  == Noen har lagt til en ressurs med ClickOps™
+
+  - Dette er helt OK, Terraform tracker ikke ressurser som ikke er i tilstanden, og
+    vil derfor ikke gjøre noe med dem.
+  - Om man ønsker å tracke dem med Terraform etter at de er opprettet, kan man
+    importere dem.
 ]
 
 #slide(image("assets/terraform-concepts-3.svg", width: 100%))
@@ -394,31 +385,31 @@ Med demonstrasjon fra lokal kjøring av Terraform
 #slide[
 + Konfigurér ressursblokker som tilsvarer ressursene som allerede eksisterer
   ```hcl
-        resource "google_pubsub_topic" "the-topic" { ... }
-        ```
+  resource "google_pubsub_topic" "the-topic" { ... }
+  ```
 
 + Importér de eksisterende ressursene
   ```bash
-        terraform import google_pubsub_topic.the-topic projects/<project-id>/topics/<topic-id>
-        ```
+  terraform import google_pubsub_topic.the-topic projects/<project-id>/topics/<topic-id>
+  ```
 
 + Se om konfigurasjonen matcher tilstanden
   ```bash
-        terraform plan
-        ```
+  terraform plan
+  ```
 
 + Om konfigurasjonen matcher, vil Terraform ikke gjøre noen endringer. Om ikke, må
   konfigurasjonen tilpasses, eller så må man akseptere at tilstanden endres:
   ```bash
-        terraform apply
-        ```
+  terraform apply
+  ```
 ]
 
 #slide[
-  == Drift
-  - Har man Terraformet noe som man ønsker å håndtere videre med ClickOps™?
-    - Da må man få Terraform til å "glemme" ressursen, og fjerne den fra
-      konfigurasjonen.
+== Har man Terraformet noe som man ønsker å håndtere videre med ClickOps™?
+
+- Da må man få Terraform til å "glemme" ressursen, og fjerne den fra
+  konfigurasjonen.
 ]
 
 #slide(image("assets/terraform-concepts-4.svg", width: 100%))
@@ -426,41 +417,118 @@ Med demonstrasjon fra lokal kjøring av Terraform
 #slide[
 + Fjern ressursen fra konfigurasjonen
   ```hcl
-        // fjern denne blokken
-        resource "google_pubsub_topic" "the-topic" { ... }
-        ```
+  // fjern denne blokken
+  resource "google_pubsub_topic" "the-topic" { ... }
+  ```
 
 + "Glem" ressursen fra tilstanden
   ```bash
-        terraform state rm google_pubsub_topic.the-topic
-        ```
+  terraform state rm google_pubsub_topic.the-topic
+  ```
 
 + Se om konfigurasjonen matcher tilstanden
   ```bash
-    terraform plan
-    ```
+  terraform plan
+  ```
   Planen skal ikke vise noen endringer.
 ]
 
 #slide[
-  == Drift
-  - Hva om man ønsker å terraforme ressursen, men ikke _alle_ attributtene?
+== Hva om man ønsker å terraforme ressursen, men ikke _alle_ attributtene?
 
-  #pause
++ Oppdater konfigurasjonen med en `lifecycle`-blokk som inneholder `ignore_changes`
+  ```hcl
+  resource "google_pubsub_topic" "the-topic" {
+    name = "my-fancy-topic"
+    lifecycle {
+      ignore_changes = ["message_retention_duration"]
+    }
+  }
+  ```
 
-  + // lifecycle +++
-  + // terraform plan +++
++ Sjekk at en ny plan ikke medfører endringer.
 ]
 
 #slide[
-  == Drift
-  - Jeg ønsker å endre navn på eller flytte en ressurskonfigurasjon
+== Jeg ønsker å endre navn på eller flytte en ressurskonfigurasjon
 
-  #pause
++ Flytt eller gi nytt navn til ressursen i konfigurasjonen
+  ```hcl
+  //                   endra fra "the-topic"
+  resource "google_pubsub_topic" "hot-topic" {
+    name = "my-fancy-topic"
+  }
+  ```
 
-  + // oppdater konfigurasjon
++ Flytt til riktig adresse i tilstanden
+  ```bash
+  terraform state mv \
+    google_pubsub_topic.the-topic \
+    google_pubsub_topic.hot-topic
+  ```
 
-  + // terraform state mv
-  
-  + // terraform plan sjekk
++ Sjekk at en ny plan ikke medfører endringer.
+]
+
+#slide[
+== Jeg ønsker å flytte en frittstående ressurs inn i en modul
+
+`terraform state mv` fungerer også mellom, inn, og ut av moduler:
+
+```bash
+terraform state mv \
+  google_pubsub_topic.the-topic \
+  module.my-fancy-module.google_pubsub_topic.hot-topic
+```
+]
+
+#centered-slide[
+= Infrastrukturen i `amedia-adp-*`
+]
+
+#slide[
+== `amedia-adp-sources`
+
+Her styres det meste av #link("https://github.com/amedia/terraform-selvbetjening/")[`amedia/terraform-selvbetjening`].
+
+Relevante moduler ligger i `modules/amedia-adp-sources`, mens instansieringen av disse ligger i `projects/amedia-adp-sources`.
+
+#pause
+
+== `amedia-adp-{prod,test}`
+
+Denne infrastrukturen styres med en god blanding av Terraform fra #link("https://github.com/amedia/adp-infrastructure")[`amedia/adp-infrastructure`], ClickOps™, DataFlow og Airflow.
+
+En stund var tilstanden i Terraform og virkeligheten ute av synk, som har medført mye ClickOps™.
+Dette skal nå være rettet opp i, og vi har lik struktur som i `terraform-selvbetjening`.
+
+Et mål er å flytte det som ligger i `adp-infrastructure` over i `terraform-selvbetjening`.
+]
+
+#slide[
+== Ymse
+
+- `amedia-adp-dbt-*`
+- `amedia-adp-marts`
+- `amedia-analytics-eu`
+- `amedia-data-restricted`
+
+Disse har jeg ikke oversikt over.
+]
+
+#slide[
+#heading(outlined: false)[Oppsummering]
+
+#v(1em)
+
+#line-by-line[
+  - Terraform (og andre _IaC_-verktøy) er en måte å håndtere infrastruktur gjennom å beskrive ønsket tilstand framfor sekvenser av handlinger.
+  - Bruk av _IaC_  gjør at tjenestene våre blir mer reproduserbare og bedre dokumentert.
+  - Vi har sett på en del vanlige operasjoner og håndtering av "drift".
+  - Vi har sett på hvordan vi bruker Terraform i ADP sine prosjekter.
+]
+
+#set align(right)
+#v(1fr)
+#image("assets/Terraform_Logo.svg", height: 20%)
 ]
