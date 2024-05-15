@@ -2,17 +2,18 @@
 #import "@preview/polylux:0.3.1": *
 #import "@preview/cetz:0.2.2"
 #import themes.simple: title-slide, centered-slide, focus-slide, slide, simple-theme
+#import pdfpc : speaker-note
 
 // Make the paper dimensions fit for a presentation and the text larger
 #set page(paper: "presentation-16-9")
 #set text(size: 20pt, lang: "nb")
 #show link: t => [#set text(blue); #underline[#t]]
 
+#show heading.where(level: 1): set block(below: 1em)
+
 // Use #polylux-slide to create a slide and style it using your favourite Typst functions
 #title-slide[
   = Terraform
-
-  #v(1em)
 
   Hva, hvorfor og hvordan
 
@@ -158,7 +159,7 @@ _Presist_
 #slide[
 == Ønsket tilstand
 
-#v(1fr)
+#v(1em)
 
 #grid(columns: (1fr, 1fr), [
 Jeg vil ha:
@@ -331,3 +332,135 @@ referanse til argument og attributt
 )
 ]
 
+#centered-slide[
+= Vanlige operasjoner
+
+#sym.bullet legge til en ressurs #sym.bullet `count` og `for_each` #sym.bullet lage
+en modul
+
+Med demonstrasjon fra lokal kjøring av Terraform
+]
+
+#centered-slide[
+== Legge til en ressurs
+#speaker-note(
+  ```md
+        Lag en ny mappe med terraform-filer basert på privat tf test repo
+
+        Lag en ny topic ressurs i `main.tf` og kjør `terraform init` og `terraform apply`
+
+        Sjekk at ressursen er opprettet i skyen
+        ```,
+)
+]
+
+#centered-slide[
+== Bruke `count` og `for_each`
+#speaker-note(```md
+    Legg til subscribers med `count` og deretter `for_each`
+    ```)
+]
+
+#centered-slide[
+== Lage en modul
+#speaker-note(
+  ```md
+        Flytt disse ressursene til en modul og bruk modulen i `main.tf`, med variabler og outputs
+        ```,
+)
+]
+
+#centered-slide[
+  = Drift
+
+  Hva om noen tuller det til med ClickOps™?
+]
+
+#slide[
+  #image("assets/terraform-concepts-2.svg", width: 100%)
+]
+
+#slide[
+  == Drift
+  - Har noen lagt til en ressurs?
+    - Dette er helt OK, Terraform tracker ikke ressurser som ikke er i tilstanden, og
+      vil derfor ikke gjøre noe med dem.
+    - Om man ønsker å tracke dem med Terraform etter at de er opprettet, kan man
+      importere dem.
+]
+
+#slide(image("assets/terraform-concepts-3.svg", width: 100%))
+
+#slide[
++ Konfigurér ressursblokker som tilsvarer ressursene som allerede eksisterer
+  ```hcl
+        resource "google_pubsub_topic" "the-topic" { ... }
+        ```
+
++ Importér de eksisterende ressursene
+  ```bash
+        terraform import google_pubsub_topic.the-topic projects/<project-id>/topics/<topic-id>
+        ```
+
++ Se om konfigurasjonen matcher tilstanden
+  ```bash
+        terraform plan
+        ```
+
++ Om konfigurasjonen matcher, vil Terraform ikke gjøre noen endringer. Om ikke, må
+  konfigurasjonen tilpasses, eller så må man akseptere at tilstanden endres:
+  ```bash
+        terraform apply
+        ```
+]
+
+#slide[
+  == Drift
+  - Har man Terraformet noe som man ønsker å håndtere videre med ClickOps™?
+    - Da må man få Terraform til å "glemme" ressursen, og fjerne den fra
+      konfigurasjonen.
+]
+
+#slide(image("assets/terraform-concepts-4.svg", width: 100%))
+
+#slide[
++ Fjern ressursen fra konfigurasjonen
+  ```hcl
+        // fjern denne blokken
+        resource "google_pubsub_topic" "the-topic" { ... }
+        ```
+
++ "Glem" ressursen fra tilstanden
+  ```bash
+        terraform state rm google_pubsub_topic.the-topic
+        ```
+
++ Se om konfigurasjonen matcher tilstanden
+  ```bash
+    terraform plan
+    ```
+  Planen skal ikke vise noen endringer.
+]
+
+#slide[
+  == Drift
+  - Hva om man ønsker å terraforme ressursen, men ikke _alle_ attributtene?
+
+  #pause
+
+  + // lifecycle +++
+  + // terraform plan +++
+]
+
+#slide[
+  == Drift
+  - Jeg ønsker å endre navn på eller flytte en ressurskonfigurasjon
+
+  #pause
+
+  + // oppdater konfigurasjon
+
+  + // terraform state mv
+  
+  + // terraform plan sjekk
+]
