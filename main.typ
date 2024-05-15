@@ -161,12 +161,12 @@ _Presist_
 #v(1fr)
 
 #grid(columns: (1fr, 1fr), [
-  Jeg vil ha:
+Jeg vil ha:
 
-  - Et pubsub topic som heter `my-fancy-topic`
-  - En subscription som heter `my-fancy-topic-subscription`
-    - ack-deadline på 20 sekunder
-    - pusher til et endepunkt
+- Et pubsub topic som heter `my-fancy-topic`
+- En subscription som heter `my-fancy-topic-subscription`
+  - ack-deadline på 20 sekunder
+  - pusher til et endepunkt
 ], [
 #uncover(2)[
 #set text(size: 12pt)
@@ -286,38 +286,48 @@ referanse til argument og attributt
 #v(1fr)
 ]
 
-
 #slide[
   #image("assets/terraform-concepts-1.svg", width: 100%)
 ]
 
 #slide[
-  == I grove trekk
+== I grove trekk
 
-  #grid(columns: (1fr, 1fr), gutter: 1em, [
-    - utvikleren endrer på en *konfigurasjon* (f.eks. legger til ressurser i `main.tf`)
-    #uncover("2-")[
+#grid(
+  columns: (1fr, 1fr), gutter: 1em, [
+  - utvikleren endrer på en *konfigurasjon* (f.eks. legger til ressurser i `main.tf`)
+  #uncover(
+    "2-",
+  )[
     - terraform sammenlikner konfigurasjonen med en *tilstand* og lager en *plan*
-    ]
-    #uncover("3-")[
+  ]
+  #uncover("3-")[
     - terraform får tilgang til skyen ved hjelp av en *provider*
-    ]
-    #uncover("4-")[
+  ]
+  #uncover("4-")[
     - ved hjelp av providerens API-er gjør terraform endringer i ressurser
-    ]
-    #uncover("5-")[
+  ]
+  #uncover("5-")[
     - tilstanden er nå oppdatert slik at den stemmer med konfigurasjonen
-    ]
+  ]
   ], [
-    / konfigurasjon: filer som slutter med `.tf`
-    #uncover("2-")[
-    / tilstand: vanligvis `default.tfstate` -- lagret lokalt eller i en bøtte (en *backend*) -- beskriver hvilke ressurser terraform tracker og tilstanden til disse ressursene -- holdes i synk ved hver `terraform plan/refresh`
-    / plan: en sekvens av handlinger som utgjør en diff, og fører til at tilstanden er slik konfigurasjonen tilsier
-    ]
-    #uncover("3-")[
-    / provider: en plugin som beskriver hvilke ressurser som er tilgjengelige, og hvordan de konfigureres
-    ]
-  ])
+  / konfigurasjon: filer som slutter med `.tf`
+  #uncover(
+    "2-",
+  )[
+  / tilstand: vanligvis `default.tfstate` -- lagret lokalt eller i en bøtte (en *backend*) --
+    beskriver hvilke ressurser terraform tracker og tilstanden til disse ressursene
+    -- holdes i synk ved hver `terraform plan/refresh`
+  / plan: en sekvens av handlinger som utgjør en diff, og fører til at tilstanden er slik
+    konfigurasjonen tilsier
+  ]
+  #uncover(
+    "3-",
+  )[
+    / provider: en plugin som beskriver hvilke ressurser som er tilgjengelige, og hvordan de
+      konfigureres
+  ]
+  ],
+)
 ]
-
 
