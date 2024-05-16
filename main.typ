@@ -37,7 +37,7 @@
 ]
 
 #centered-slide[
-  = Slik håndterer vi ressurser i skyen
+  = Slik håndterer vi infrastruktur i skyen
 ]
 
 #centered-slide[
@@ -51,7 +51,7 @@
 #slide[
 == CLI
 
-_Presist_
+_Presist, repeterbart_
 
 ```bash
 gcloud --project='amedia-adp-test' pubsub \
@@ -62,6 +62,8 @@ gcloud --project='amedia-adp-test' pubsub \
   subscriptions create 'my-subscription' \
   --topic='my-topic'
 ```
+
+#v(1fr)
 
 #uncover(
   2,
@@ -135,11 +137,13 @@ gcloud --project='amedia-adp-test' pubsub \
 #slide[
   == Fellestrekk
 
-  _ClickOps og gcloud_
+  _ClickOps og CLI_
 
   - Sekvens av steg som forhåpentligvis tar deg til mål
   - Beskriver handlinger, ikke tilstand
   - Er ikke "idempotent"
+
+  #v(1em)
 
   #only(1)[#steps_1]
   #only(2)[#steps_2]
@@ -286,27 +290,39 @@ referanse til argument og attributt
 == Prosessen i grove trekk
 
 #grid(
-  columns: (1fr, 1fr), gutter: 1em, [
+  columns: (1fr, 1fr),
+  gutter: 1em,
+  stroke: (x, y) => {
+    if (x == 0) {
+      (
+        right: (dash: "dashed")
+      )
+    }
+    else {
+      none
+    }
+  },
+  [
   - utvikleren endrer på en *konfigurasjon* (f.eks. legger til ressurser i `main.tf`)
   #uncover(
-    "2-",
+    "3-",
   )[
     - terraform sammenlikner konfigurasjonen med en *tilstand* og lager en *plan*
   ]
-  #uncover("3-")[
+  #uncover("4-")[
     - terraform får tilgang til skyen ved hjelp av en *provider*
   ]
-  #uncover("4-")[
+  #uncover("5-")[
     - ved hjelp av providerens API-er gjør terraform endringer i ressurser
   ]
-  #uncover("5-")[
+  #uncover("6-")[
     - tilstanden er nå oppdatert slik at den stemmer med konfigurasjonen
   ]
   ], [
+  #uncover("2-")[
   / konfigurasjon: filer som slutter med `.tf`
-  #uncover(
-    "2-",
-  )[
+  ]
+  #uncover("3-")[
   / tilstand: vanligvis `default.tfstate` -- lagret lokalt eller i en bøtte (en *backend*) --
     beskriver hvilke ressurser terraform tracker og tilstanden til disse ressursene
     -- holdes i synk ved hver `terraform plan/refresh`
@@ -314,7 +330,7 @@ referanse til argument og attributt
     konfigurasjonen tilsier
   ]
   #uncover(
-    "3-",
+    "4-",
   )[
     / provider: en plugin som beskriver hvilke ressurser som er tilgjengelige, og hvordan de
       konfigureres
