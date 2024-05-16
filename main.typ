@@ -533,6 +533,16 @@ Disse har jeg ikke oversikt over.
 ]
 
 #slide[
+  = Annet
+
+  - `terraform fmt -recursive` og `terraform validate`
+  #uncover("2-")[- Kan jeg hoppe ressurser om noen andre har skapt mye drift? #uncover("3-")[ \ (Ja, se `terraform apply -target=<resource-address>`).]]
+  #uncover("4-")[- Hva er Atlantis?]
+  #uncover("5-")[- Alternativer til Terraform?]
+
+]
+
+#slide[
 #heading(outlined: false)[Oppsummering]
 
 #v(1em)
