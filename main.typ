@@ -11,6 +11,11 @@
 
 #show heading: set block(below: 1em)
 
+// Functionality for creating handouts.
+// Do not remove, since automation tool will replace this
+// line with ...(true) when creating handouts.
+#enable-handout-mode(false)
+
 // Use #polylux-slide to create a slide and style it using your favourite Typst functions
 #title-slide[
   = Terraform
@@ -536,7 +541,7 @@ Disse har jeg ikke oversikt over.
   = Annet
 
   - `terraform fmt -recursive` og `terraform validate`
-  #uncover("2-")[- Kan jeg hoppe ressurser om noen andre har skapt mye drift? #uncover("3-")[ \ (Ja, se `terraform apply -target=<resource-address>`).]]
+  #uncover("2-")[- Kan jeg hoppe over ressurser om noen andre har skapt mye drift? #uncover("3-")[ \ (Ja, se `terraform apply -target=<resource-address>`).]]
   #uncover("4-")[- Hva er Atlantis?]
   #uncover("5-")[- Alternativer til Terraform?]
 
