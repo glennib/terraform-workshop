@@ -351,6 +351,13 @@ referanse til argument og attributt
 en modul
 
 Med demonstrasjon fra lokal kjøring av Terraform
+
+#v(1em)
+
+```bash
+git clone https://github.com/glennib/terraform-workshop.git
+cd terraform
+```
 ]
 
 #centered-slide[

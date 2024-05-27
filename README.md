@@ -1,6 +1,10 @@
-# Source for Terraform workshop
+# source for terraform workshop
 
-## Dependencies
+## looking for terraform template code?
+
+[🔗](./terraform/) `cd terraform`
+
+## dependencies
 
 - compiling presentation
   - [`typst`] - `sudo snap install typst`
@@ -17,3 +21,13 @@
 [`pdf2svg`]: https://github.com/dawbarton/pdf2svg
 [`pdfpc`]: https://polylux.dev/book/external/pdfpc.html
 [`polylux2pdfpc`]: https://polylux.dev/book/external/pdfpc.html#extracting-the-data--polylux2pdfpc
+
+## compiling
+
+```bash
+make compile-handout        # Compile the handout version of the presentation
+make compile                # Compile the presentation
+make present                # Run presentation
+make present-without-notes  # Run presentation without notes
+make terraform-concepts     # Convert the pdf of figures to svg files
+```
