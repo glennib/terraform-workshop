@@ -14,10 +14,9 @@ present: main.pdf main.pdfpc ## Run presentation
 present-without-notes: main.pdf ## Run presentation without notes
 	pdfpc main.pdf
 
-terraform-concepts: assets/terraform-concepts.pdf ## Convert the pdf of figures to svg files
-	./scripts/pdf-to-svgs.sh assets/terraform-concepts.pdf
+terraform-concepts: assets/terraform-concepts-1.svg ## Convert the pdf of figures to svg files
 
-main.pdf: main.typ
+main.pdf: main.typ assets/terraform-concepts-1.svg
 	typst compile main.typ
 
 main.pdfpc: main.typ
@@ -26,5 +25,8 @@ main.pdfpc: main.typ
 main-handout.typ: main.typ
 	./scripts/handout.sh main.typ
 
-main-handout.pdf: main-handout.typ
+main-handout.pdf: main-handout.typ assets/terraform-concepts-1.svg
 	typst compile main-handout.typ
+
+assets/terraform-concepts-1.svg: assets/terraform-concepts.pdf
+	./scripts/pdf-to-svgs.sh assets/terraform-concepts.pdf
