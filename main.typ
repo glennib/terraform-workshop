@@ -27,7 +27,7 @@
     Workshop \@ Amedia
   ]
 
-  #datetime(year: 2024, month: 5, day: 28).display()
+  #datetime(year: 2024, month: 6, day: 12).display()
 ]
 
 #slide[
@@ -206,7 +206,7 @@ resource "google_pubsub_subscription" "the-subscription" {
   == Å bruke Terraform er lurt fordi
 
   - koden _er_ infrastrukturen $==>$ "dokumentasjonen" vedlikeholdes automatisk
-  - historikk ved hjelp av git
+  - historikk ved hjelp av `git`
   - tjenestene blir mer reproduserbare
 
   #v(1fr)
@@ -347,17 +347,30 @@ referanse til argument og attributt
 #centered-slide[
 = Noen vanlige operasjoner
 
-#sym.bullet legge til en ressurs #sym.bullet `count` og `for_each` #sym.bullet lage
-en modul
+legge til en ressurs \
+`count` og `for_each` \
 
 Med demonstrasjon fra lokal kjøring av Terraform
 
 #v(1em)
 
+#uncover("2-")[
+
 ```bash
 git clone https://github.com/glennib/terraform-workshop.git
 cd terraform
 ```
+
+
+Her er det mulig å kjøre litt lokalt i et prosjekt du selv har tilgang til.
+Bytt ut #box(`amedia-adp-test`) med et annet testprosjekt.
+
+```bash
+sed -i 's/amedia-adp-test/YOUR-PROJECT-HERE/' main.tf
+gcloud auth application-default login
+terraform init
+```
+]
 ]
 
 #centered-slide[
@@ -510,38 +523,85 @@ terraform state mv \
 ```
 ]
 
-#centered-slide[
-= Infrastrukturen i `amedia-adp-*`
+#slide[
+= `amedia-apps-*` - vi må rydde litt
+
+```bash
+git clone git@github.com:amedia/terraform-selvbetjening.git
+cd projects/amedia-apps-test
+```
 ]
 
 #slide[
-== `amedia-adp-sources`
+  == Alt er flatt + mapper er moduler
 
-Her styres det meste av #link("https://github.com/amedia/terraform-selvbetjening/")[`amedia/terraform-selvbetjening`].
 
-Relevante moduler ligger i `modules/amedia-adp-sources`, mens instansieringen av disse ligger i `projects/amedia-adp-sources`.
 
-#pause
-
-== `amedia-adp-{prod,test}`
-
-Denne infrastrukturen styres med en god blanding av Terraform fra #link("https://github.com/amedia/adp-infrastructure")[`amedia/adp-infrastructure`], ClickOps™, DataFlow og Airflow.
-
-En stund var tilstanden i Terraform og virkeligheten ute av synk, som har medført mye ClickOps™.
-Dette skal nå være rettet opp i, og vi har lik struktur som i `terraform-selvbetjening`.
-
-Et mål er å flytte det som ligger i `adp-infrastructure` over i `terraform-selvbetjening`.
+#only("1-2")[
+#side-by-side[
+```
+amedia-apps-test
+├── aiven
+│   ├── ...
+├── atlantis.tf
+├── eavis.tf
+├── einherjer.tf
+├── encamp-write-pubsub.tf
+├── imported-buckets.tf
+├── jotunheim.tf
+├── midgard-bucket.tf
+├── midgard.tf
+└── ...
+```
+][
+#uncover("2-")[
+```hcl
+// midgard.tf
+resource "google_storage_bucket" "midgard" {
+  // ...
+}
+// einherjer.tf
+resource "google_storage_bucket" "einherjer" {
+  // ...
+}
+```
 ]
-
-#slide[
-== Ymse
-
-- `amedia-adp-dbt-*`
-- `amedia-adp-marts`
-- `amedia-analytics-eu`
-- `amedia-data-restricted`
-
-Disse har jeg ikke oversikt over.
+]
+]
+#only("3-")[
+#side-by-side[
+```
+.
+├── modules
+│   ├── midgard
+│   │   ├── main.tf
+│   │   ├── output.tf
+│   │   ├── README.md
+│   │   └── variables.tf
+│   └── yggdrasil/...
+└── projects
+    ├── amedia-apps-prod
+    │   └── main.tf
+    └── amedia-apps-test/...
+```
+][
+#uncover(4)[
+`projects/amedia-apps-prod/main.tf`:
+```hcl
+module "midgard" {
+  source = "../modules/midgard"
+  // parametrize this
+}
+module "yggdrasil" {
+  source = "../modules/yggdrasil"
+  // parametrize this
+}
+// ...
+```
+Gjør det likt i `amedia-apps-test`.
+]
+]
+]
 ]
 
 #slide[
@@ -563,7 +623,7 @@ Disse har jeg ikke oversikt over.
   - Terraform (og andre _IaC_-verktøy) er en måte å håndtere infrastruktur gjennom å beskrive ønsket tilstand framfor sekvenser av handlinger.
   - Bruk av _IaC_  gjør at tjenestene våre blir mer reproduserbare og bedre dokumentert.
   - Vi har sett på en del vanlige operasjoner og håndtering av "drift".
-  - Vi har sett på hvordan vi bruker Terraform i ADP sine prosjekter.
+  - Vi har sett på tilstand og (forsøkt og) gjort litt opprydding i `amedia-apps-test`.
 ]
 
 #set align(right)

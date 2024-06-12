@@ -16,9 +16,10 @@ terraform {
 # Set up provider
 
 provider "google" {
-  project = "amedia-adp-test"
+  project = "amedia-adp-test" # change to your project
   default_labels = {
     managed-by = "terraform"
+    tmp        = "delete-me"
   }
   region = "europe-north1"
 }
